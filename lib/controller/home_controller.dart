@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_randomcolor/flutter_randomcolor.dart';
 import 'package:get/get.dart';
 import 'package:todo/di/app_module.dart';
 import 'package:todo/model/repository/todo_repository_impl.dart';
@@ -10,9 +9,8 @@ import '../model/todo.dart';
 
 class HomeController extends GetxController{
 
-  Options options = Options(format: Format.hex, luminosity: Luminosity.dark, alpha: 0.5);
   TextEditingController textController = TextEditingController();
-  List<Todo> todos = <Todo>[].obs;
+  RxList<Todo> todos = <Todo>[].obs;
 
   TodoRepositoryImpl repository = TodoRepositoryImpl(AppModule.dbHelper);
 
@@ -25,13 +23,27 @@ class HomeController extends GetxController{
     }
   }
 
-  void insertNew(){
+  void insertNew() async{
     if(textController.text == "")
       return;
     Todo todo = Todo(textController.text, 0);
+
+    int id = (await repository.createTodo(todo)).data!!;
+    todo.id = id;
     todos.add(todo);
-    repository.createTodo(todo);
     textController.clear();
+    todos.refresh();
+  }
+
+  void checkDone(Todo todo, bool value){
+    for (int i = 0; i < todos.length; i++) {
+      if(todos[i].id == todo.id){
+        todos[i].done = value ? 1 : 0;
+        todos.refresh();
+        repository.updateTodoById(todo.id, todos[i]);
+        return;
+      }
+    }
   }
 
   void deleteTodo(int id){
@@ -39,6 +51,7 @@ class HomeController extends GetxController{
     for (var todo in todos) {
       if(todo.id == id){
         todos.remove(todo);
+        todos.refresh();
         return;
       }
     }

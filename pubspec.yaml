@@ -15,7 +15,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   get: ^4.6.5
   path: ^1.8.3
-  flutter_randomcolor: ^1.0.14
 
 
 dev_dependencies:

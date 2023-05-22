@@ -4,6 +4,7 @@ class Todo{
   late int id;
   String content;
   int done;
+
   Todo(this.content, this.done);
   Todo.withId({required this.id, required this.content, this.done = 0});
 
