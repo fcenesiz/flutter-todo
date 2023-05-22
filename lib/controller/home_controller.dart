@@ -21,10 +21,8 @@ class HomeController extends GetxController{
   void init() async{
     Resource<List<Todo>> resource = await repository.retrieveTodos();
     if(resource.data != null){
-      resource.data?.forEach((element) { todos.add(element);});
+      resource.data?.forEach((todo) { todos.add(todo);});
     }
-    print("todos:");
-    print("todos = $todos");
   }
 
   void insertNew(){
